@@ -147,9 +147,9 @@ if(file.exists(default_dbPath)) {
     new_dataset_group_path <- input$new_dataset_group$datapath
     new_dataset_group_data <- read_csv(new_dataset_group_path) %>% na.omit()
     # check if any sample has no group info
-    print(new_dataset_group_data[[1]])
-    print(colnames(new_dataset_expr())[c(-1,-2,-3)])
-    print(all(new_dataset_group_data[[1]] %in% colnames(new_dataset_expr())[c(-1,-2,-3)]))
+    # print(new_dataset_group_data[[1]])
+    # print(colnames(new_dataset_expr())[c(-1,-2,-3)])
+    # print(all(new_dataset_group_data[[1]] %in% colnames(new_dataset_expr())[c(-1,-2,-3)]))
     if(all(new_dataset_group_data[[1]] %in% colnames(new_dataset_expr())[c(-1,-2,-3)])) {
       return(new_dataset_group_data)
     } else {
@@ -176,24 +176,53 @@ if(file.exists(default_dbPath)) {
     if(all(!is.null(new_dataset_expr()), !is.null(new_dataset_group()), !is.null(input$new_dataset_name),
       !is.null(input$new_dataset_user), !is.null(input$new_dataset_species), !is.null(input$new_dataset_method),
       !is.null(input$new_dataset_source), !is.null(input$new_dataset_celltype))) {
-      print("Enable upload button")
+    #  print("Enable upload button")
     #  addClass("new_dataset_upload", "green")
       enable("new_dataset_upload") } # via shinyjs
   })
 
   # write to db if enabled submitButton pressed
   observeEvent(input$new_dataset_upload, {
-    print("Submit new dataset")
-    new_dataset <- tibble(date=Sys.Date(), user=input$new_dataset_user, species=input$new_dataset_species, method=input$new_dataset_method,
-                          name=input$new_dataset_name, source=input$new_dataset_source, celltype=input$new_dataset_celltype,
-                          expr=list(new_dataset_expr()), group=list(new_dataset_group()))
+   # print("Submit new dataset")
+    new_dataset <- tibble(date=Sys.Date(), user=input$new_dataset_user, species=input$new_dataset_species,
+                          method=input$new_dataset_method, name=input$new_dataset_name, source=input$new_dataset_source,
+                          celltype=input$new_dataset_celltype, expr=list(new_dataset_expr()), group=list(new_dataset_group()))
     db <- bind_rows(db, new_dataset)
     # save new db
-    print("Write updated db")
     saveRDS(db, default_dbPath, compress=F)
+    Sys.sleep(1)
+    shinyalert("Upload success, refresh page will see new dataset", type="success")
   })
 
-  output$dbpath <- renderText({dbPath})
+
+
+################################### remove dataset ###################################
+  updateSelectizeInput(session, "dataset_tobe_remove", choices=db$name)
+
+  # pass password to remove datasets
+  observeEvent(input$submit_dataset_tobe_remove, {
+    if(length(input$dataset_tobe_remove)==0) {
+      shinyalert("Warning", "No dataset was selected!", type="warning")
+    } else {
+      shinyalert("Please input admin password to remove selected datasets:", type="input", callbackR=mycallback) }
+  })
+
+  # if inputed password is correct
+  mycallback <- function(value) {
+    Sys.sleep(0.5)
+    if(value==admin_password) {
+      db_remove <- filter(db, !(name %in% input$dataset_tobe_remove))
+      Sys.sleep(0.5)
+      saveRDS(db_remove, default_dbPath, compress=F)
+      shinyalert("Datasets have beed removed!", type="info")
+    } else {
+      shinyalert("Incorrect password", type="error")
+    }
+  }
+
+
+
+  output$dbpath <- renderText({dbpath})
 }
 
 

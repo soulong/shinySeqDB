@@ -1,7 +1,7 @@
 Package: shinySeqDB
 Type: Package
 Title: manager and show RNA seq datastes
-Version: 1.0.0
+Version: 1.1.0
 Author: Hao He
 Maintainer: Hao He <haohe90@gmail.com>
 Description: a efficent way to manage a lot of RNA seq expression data and supply a searchable web interface via shiny app

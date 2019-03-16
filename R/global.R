@@ -18,3 +18,4 @@ library(plotly)
 # maxium upload size
 options(shiny.maxRequestSize=100*1024^2)
 
+admin_password <- "delete"

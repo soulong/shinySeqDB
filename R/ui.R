@@ -10,11 +10,11 @@ header <- dashboardHeader(title="shinySeqDB")
 sidebar <- dashboardSidebar(
   sidebarMenu(id="current_tab",
               menuItem("Summary", tabName="summary_page", icon=icon("dashboard"), selected=T),
-              # menuItem("DataTable", icon=icon("th"), startExpanded=F,
-              #          menuSubItem("Bulk RNAseq", tabName="bulkseq_page"),
-              #          menuSubItem("Sing cell RNAseq", tabName="scseq_page")),
               menuItem("Query Genes", tabName="query_genes_page", icon=icon("bar-chart-o")),
-              menuItem("Upload Dataset", tabName="upload_page", icon=icon("circle")),
+              menuItem("Manager Datasets", icon=icon("th"), startExpanded=F,
+                       menuSubItem("Upload dataset", tabName="upload_page", icon=icon("circle")),
+                       menuSubItem("Remove dataset", tabName="remove_page", icon=icon("circle")) ),
+
               helpText("Developed by the Hao He",
                        style="padding-left:1em; padding-right:1em;position:absolute; bottom:20em;"),
               helpText("Version: 1.0.0",
@@ -115,6 +115,13 @@ body <- dashboardBody(
                   DTOutput("new_dataset_expr_table"), style="height:500px; overflow-y: scroll;overflow-x: scroll;"),
               box(solidHeader=T, width=3, # title="Uploaded expression dataset",
                   DTOutput("new_dataset_group_table"), style="height:500px; overflow-y: scroll;overflow-x: scroll;")
+              )
+            ),
+    tabItem("remove_page",
+            fluidRow(
+              box(width=4, title="Choose datasets to be removed", status="danger", solidHeader=T,
+                  selectizeInput("dataset_tobe_remove", NULL, choices="", multiple=T)),
+              actionButton("submit_dataset_tobe_remove", "Delete", icon=icon("fas fa-trash"), width="200px")
               )
             )
     )
