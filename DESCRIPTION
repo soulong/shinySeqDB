@@ -12,10 +12,13 @@ Imports:
       shiny,
       shinydashboard,
       shinyjs,
+      shinyalert,
       stringr,
+      readr,
+      tidyr,
+      rlist,
       dplyr,
       ggplot2,
       DT,
-      ggplot2,
       plotly
 RoxygenNote: 6.1.1
