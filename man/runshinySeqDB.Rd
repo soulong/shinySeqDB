@@ -4,14 +4,20 @@
 \alias{runshinySeqDB}
 \title{run shinySeqDB}
 \usage{
-runshinySeqDB(port = 5000)
+runshinySeqDB(port = 5000,
+  default_dbPath = "~/Desktop/seqdb_hulab.rds")
 }
 \arguments{
-\item{port}{}
+\item{port}{the port number when you run the shiny app}
+
+\item{default_dbPath}{the database file path when you lauch the shiny app,
+if the file does not exist, the new database will be
+created and file path will be the default_dbPath}
 }
 \description{
 run shinySeqDB
 }
 \examples{
-runshinySeqDB(port=5000)
+runshinySeqDB(port=5000, default_dbPath="~/Desktop/seqdb_hulab.rds")
+
 }

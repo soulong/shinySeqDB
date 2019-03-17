@@ -9,11 +9,11 @@ header <- dashboardHeader(title="shinySeqDB")
 # sidebar
 sidebar <- dashboardSidebar(
   sidebarMenu(id="current_tab",
-              menuItem("Summary", tabName="summary_page", icon=icon("dashboard"), selected=T),
-              menuItem("Query Genes", tabName="query_genes_page", icon=icon("bar-chart-o")),
-              menuItem("Manager Datasets", icon=icon("th"), startExpanded=F,
-                       menuSubItem("Upload dataset", tabName="upload_page", icon=icon("circle")),
-                       menuSubItem("Remove dataset", tabName="remove_page", icon=icon("circle")) ),
+              menuItem("Summary", tabName="summary_page", icon=icon("fas fa-dove fa-xs"), selected=T),
+              menuItem("Query Genes", tabName="query_genes_page", icon=icon("fas fa-search")),
+              menuItem("Manager Datasets", icon=icon("fas fa-database"), startExpanded=F,
+                       menuSubItem("Upload dataset", tabName="upload_page", icon=icon("fas fa-cloud-upload-alt")),
+                       menuSubItem("Remove dataset", tabName="remove_page", icon=icon("fas fa-trash")) ),
 
               helpText("Developed by the Hao He",
                        style="padding-left:1em; padding-right:1em;position:absolute; bottom:20em;"),
@@ -62,31 +62,37 @@ body <- dashboardBody(
     tabItem("query_genes_page",
             fluidRow(
               box(status="danger", solidHeader=T, width=12, height="140px",
-                  column(3, textAreaInput("query_gene_list", label=NULL, height="120px")),
-                  column(3, selectInput("query_gene_idtype", label="Input type",
+                  column(2, textAreaInput("query_gene_list", label=NULL, height="120px")),
+                  column(2, selectInput("query_gene_idtype", label="Input type",
                                         choices=c("ensembl_gene_id", "symbol", "entrezgene"), selected="symbol"),
-                            actionButton("query_gene_submit", "Query now", icon=icon("refresh")) ),
-                  column(3, selectInput("query_gene_celltype", label="Dataset", choices=""),
-                         downloadButton("query_gene_download", label="Download result")),
-                  column(3, selectInput("query_gene_dataset", label="Dataset", choices=""),
-                         radioButtons("result_data_type", "Tidy data", choices=c("yes"="yes", "no"="no"), selected="no", inline=T)) ),
-              box(width=12, title="Expression data", status="danger", solidHeader=T, collapsible=T, collapsed=T,
-                  DTOutput("query_gene_result_table"), style="height:500px; overflow-y: scroll;overflow-x: scroll;"),
-              box(width=2, status="danger", solidHeader=F, collapsible=T, collapsed=F, height="600px",
-                         selectInput("query_gene_plot_x", label="X_label",
-                                     choices=c("group", "sample", "method", "celltype", "symbol"), selected="group"),
-                         selectInput("query_gene_plot_color", label="Color",
-                                     choices=c("group", "sample", "method", "celltype", "symbol"), selected="sample"),
-                         selectInput("query_gene_plot_shape", label="Shape",
-                                     choices=c("group", "sample", "method", "celltype", "symbol"), selected="method"),
-                         selectInput("query_gene_plot_facet", label="Facet",
-                                     choices=c("group", "sample", "method", "celltype", "symbol"), selected="symbol"),
-                         selectInput("query_gene_plot_scale", label="Scale",
-                                     choices=c("fixed", "free", "free_x", "free_y"), selected="free")
-                         ),
-              box(width=10, status="danger", solidHeader=F, collapsible=T, collapsed=F, height="600px",
-                  plotlyOutput("query_gene_result_plot") )
-              )
+                        radioButtons("result_data_type", "Tidy data", choices=c("yes"="yes", "no"="no"), selected="no", inline=T) ),
+                  column(3, selectInput("query_gene_dataset_all", label="Dataset", choices=c("all", "multiple"), selected="all"),
+                         actionButton("query_gene_submit", "Query now", icon=icon("refresh")),
+                         downloadButton("query_gene_download", label="Download data") ),
+                  column(5, uiOutput("query_gene_dataset_multi") )
+              ), # end of box
+
+              tabBox(title="Result", width=12,
+                     tabPanel(title="Plot", icon=icon("far fa-chart-bar"),
+                              column(width=2,
+                                     br(),
+                                     selectInput("query_gene_plot_x", label="X_label",
+                                                 choices=c("group", "sample", "method", "celltype", "symbol"), selected="group"),
+                                     selectInput("query_gene_plot_color", label="Color",
+                                                 choices=c("group", "sample", "method", "celltype", "symbol"), selected="sample"),
+                                     selectInput("query_gene_plot_shape", label="Shape",
+                                                 choices=c("group", "sample", "method", "celltype", "symbol"), selected="method"),
+                                     selectInput("query_gene_plot_facet", label="Facet",
+                                                 choices=c("group", "sample", "method", "celltype", "symbol"), selected="symbol"),
+                                     selectInput("query_gene_plot_scale", label="Scale",
+                                                 choices=c("fixed", "free", "free_x", "free_y"), selected="free"),
+                                     sliderInput("query_gene_plot_x_angle", "Angle", min=0, max=90, value=45, step=15) ),
+                              column(width=10, plotlyOutput("query_gene_result_plot", height="500px")),
+                              style="height:500px; overflow-y: scroll;overflow-x: scroll;"),
+                     tabPanel(title="Data", icon=icon("fas fa-table"),
+                              DTOutput("query_gene_result_table"), style="height:500px; overflow-y: scroll;overflow-x: scroll;")
+                     ) # end of tabbox
+              ) # end of fluidrow
             ),
 
     tabItem("upload_page",

@@ -27,21 +27,14 @@ if(file.exists(default_dbPath)) {
      # xlab(input$summary_x)
   })
 
-
-
   ################################### query genes ###################################
   # update dataset UI
-
   observe({
-      updateSelectInput(session, inputId="query_gene_celltype", label="Cell type", choices=c("all", db$celltype), selected="all")
-  })
-
-  observe({
-    if(input$query_gene_celltype=="all") {
-      updateSelectInput(session, inputId="query_gene_dataset", label="Dataset", choices=c("all", db$name), selected="all")
-    } else {
-      db_select <- filter(db, celltype==input$query_gene_celltype)
-      updateSelectInput(session, inputId="query_gene_dataset", label="Dataset", choices=c("all", db_select$name)) }
+    print(input$query_gene_dataset_all)
+    if(input$query_gene_dataset_all=="multiple") {
+      output$query_gene_dataset_multi <- renderUI({
+        selectizeInput("query_gene_dataset_multi", label="Dataset", choices=db$name, multiple=T)
+      }) }
   })
 
   # construct query function
@@ -72,30 +65,21 @@ if(file.exists(default_dbPath)) {
     # print(genelist)
     # print(re_sum)
     # print(re_tidy_sum)
+    print(re_sum)
     return(list(re_sum, re_tidy_sum))
   }
 
   # get query result
   query_gene_result <- eventReactive(input$query_gene_submit, {
     genelist <- str_split(input$query_gene_list, "\n", simplify=T) %>% as.character()
-    if(input$query_gene_celltype=="all") {
-      if(input$query_gene_dataset=="all") {
-        db_select <- db
-        result <- query_gene_fun(db_select, input$query_gene_idtype, genelist)
-      } else {
-        db_select <- filter(db, name==input$query_gene_dataset)
-        result <- query_gene_fun(db_select, input$query_gene_idtype, genelist)
-      }
+    if(input$query_gene_dataset_all=="all") {
+      db_select <- db
+      result <- query_gene_fun(db_select, input$query_gene_idtype, genelist)
     } else {
-      if(input$query_gene_dataset=="all") {
-        db_select <- filter(db, celltype==input$query_gene_celltype)
-        result <- query_gene_fun(db_select, input$query_gene_idtype, genelist)
-      } else {
-        db_select <- filter(db, celltype==input$query_gene_celltype, name==input$query_gene_dataset)
-        result <- query_gene_fun(db_select, input$query_gene_idtype, genelist)
-      }
-      return(result)
+      db_select <- filter(db, name %in% input$query_gene_dataset_multi)
+      result <- query_gene_fun(db_select, input$query_gene_idtype, genelist)
     }
+    return(result)
   })
 
   query_gene_result_showdata <- reactive({
@@ -114,7 +98,10 @@ if(file.exists(default_dbPath)) {
     ggplot(query_gene_result()[[2]], aes(x=!!as.name(input$query_gene_plot_x), y=tpm,
           color=!!as.name(input$query_gene_plot_color), shape=!!as.name(input$query_gene_plot_shape))) +
       geom_jitter(width=0.1) + xlab("") + ylab("TPM") + theme_classic() + theme(strip.background=element_blank()) +
-      facet_wrap(as.formula(paste("~", input$query_gene_plot_facet)), scales=input$query_gene_plot_scale)
+      facet_wrap(as.formula(paste("~", input$query_gene_plot_facet)), scales=input$query_gene_plot_scale) +
+      theme(axis.text.x=element_text(vjust=0.5, hjust=0.5, angle=input$query_gene_plot_x_angle)) +
+      scale_x_discrete(labels=function(x) string_wrap(x) ) + # self_define string_wrap in global.R
+      theme(plot.margin=unit(c(0, 0, 0, 0.05), "npc")) # order: t, r, b, l  # to fully display the x and y axis labels
   })
 
   # download query result
