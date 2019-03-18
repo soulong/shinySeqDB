@@ -17,9 +17,10 @@
 #' @examples
 #' runshinySeqDB(port=5000, default_dbPath="~/Desktop/seqdb_hulab.rds")
 #'
-runshinySeqDB <- function(port=5000,
-                          default_dbPath="~/Desktop/seqdb_hulab.rds") {
+runshinySeqDB <- function(port=5000, default_dbPath="~/Desktop/seqdb_hulab.rds") {
 
+  print(getwd())
+  source("R/global.R", local=T)
   source("R/ui.R", local=T)
   source("R/server.R", local=T)
 
