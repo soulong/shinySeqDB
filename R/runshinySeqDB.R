@@ -1,4 +1,11 @@
 
+#'
+#' @param port run app on localhost, define a port, default port is 5000
+#'
+#' @param default_dbPath provide a .rda database, if no existing db, use can create a new db, and default_dbPath will be the saved db path
+#'
+#' @param admin_password admin password, used to delete datasets from existing db
+#'
 #' @export
 runshinySeqDB <- function(port=5000, default_dbPath="~/Desktop/seqdb_hulab.rda", admin_password="delete") {
 
