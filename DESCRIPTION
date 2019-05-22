@@ -1,0 +1,28 @@
+Package: shinySeqDB
+Title: Display multi NGS data, plot it and export it 
+Version: 1.0.0
+Authors@R: 
+    person(given = "Hao",
+           family = "He",
+           role = c("aut", "cre"),
+           email = "haohe90@gmail.com")
+Description: Display multi NGS data, plot it and export it
+License: MIT + file LICENSE
+Encoding: UTF-8
+Depends: R (>= 3.5),
+  readxl,
+  shiny,
+  shinydashboard,
+  shinyjs,
+  shinyalert,
+  stringr,
+  readr,
+  rlist,
+  dplyr,
+  ggplot2,
+  tidyr,
+  DT,
+  plotly,
+  cowplot
+LazyData: true
+RoxygenNote: 6.1.1
