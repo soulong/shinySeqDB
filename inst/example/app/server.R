@@ -60,7 +60,7 @@ if(file.exists(default_dbPath)) {
         # tidy format and add group column
         re.tidy <- gather(re, key=sample, value=tpm, na.rm=F,
                  -date, -user, -species, -method, -name, -source, -celltype,
-                 -ensembl_gene_id, -symbol)
+                 -ensembl_gene_id, -symbol, -entrezgene)
         re.tidy.group <- match(re.tidy$sample, db_list$group[[i]][[1]]) %>% db_list$group[[i]][[2]][.]
         re.tidy$group <- re.tidy.group
         re_sum <- bind_rows(re_sum, re)
@@ -132,10 +132,10 @@ if(file.exists(default_dbPath)) {
     if(is.null(input$new_dataset_expr)) return(NULL)
     new_dataset_expr_path <- input$new_dataset_expr$datapath
     new_dataset_expr_data <- read_xlsx(new_dataset_expr_path, sheet=1)
-    attr <- c("entrezgene", "enterzid", "type", "bio_type", "description", "name")
+    attr <- c("type", "bio_type", "description", "name")
     discard_column <- which(colnames(new_dataset_expr_data) %in% attr)
     new_dataset_expr_data <- dplyr::select(new_dataset_expr_data, -discard_column)
-    colnames(new_dataset_expr_data)[1:2] <- c("ensembl_gene_id", "symbol")
+    colnames(new_dataset_expr_data)[1:3] <- c("ensembl_gene_id", "symbol", "entrezgene")
     return(new_dataset_expr_data)
     })
 

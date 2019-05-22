@@ -79,7 +79,7 @@ body <- dashboardBody(
                                      br(),
                                      selectInput("query_gene_plot_x", label="X_label",
                                                  choices=c("group", "sample", "method", "celltype", "symbol"), selected="group"),
-                                     selectInput("query_gene_plot_color", label="Color",
+                                     selectInput("query_gene_plot_color", label="group",
                                                  choices=c("group", "sample", "method", "celltype", "symbol"), selected="sample"),
                                      selectInput("query_gene_plot_shape", label="Shape",
                                                  choices=c("group", "sample", "method", "celltype", "symbol"), selected="method"),
